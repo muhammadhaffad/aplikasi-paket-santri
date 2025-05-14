@@ -5,6 +5,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import { Link, usePage } from '@inertiajs/react';
 import { useOverflowDetector } from 'react-detectable-overflow';
+import { Toaster } from 'react-hot-toast';
 
 const getMenus = () => {
     return [
@@ -25,6 +26,7 @@ export default function Authenticated({ user, header, children }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
+            <Toaster position="bottom-right" reverseOrder={false}/>
             <nav className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
@@ -109,7 +111,6 @@ export default function Authenticated({ user, header, children }) {
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + (overflow ? '' : ' hidden')}>
                     <div className="pt-2 pb-3 space-y-1">
                         {menus.map((menu, index) => (
-                            console.log(menu),
                             <ResponsiveNavLink key={menu.nama + index} href={route(menu.route_name)} active={route().current(menu.route_active)}>
                                 {menu.nama}
                             </ResponsiveNavLink>

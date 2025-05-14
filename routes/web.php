@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SantriController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -36,14 +37,20 @@ Route::middleware('auth')->group(function () {
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
     Route::prefix('santri')->group(function () {
-        Route::get('/', function () {
-            return 'A';
-        })->name('santri.index');
+        Route::get('/', [SantriController::class, 'index'])->name('santris.index');
+        Route::get('/create', [SantriController::class, 'create'])->name('santris.create');
+        Route::post('/store', [SantriController::class, 'store'])->name('santris.store');
+        Route::get('/edit/{id}', function () {
+            return Inertia::render('Santri/Edit');
+        })->name('santris.edit');
+        Route::get('/show/{id}', function () {
+            return Inertia::render('Santri/Show');
+        })->name('santris.show');
     });
     Route::prefix('paket')->group(function () {
         Route::get('/', function () {
             return 'A';
-        })->name('paket.index');
+        })->name('pakets.index');
     });
     Route::prefix('laporan')->group(function () {
         Route::get('/', function () {
@@ -58,7 +65,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('users')->group(function () {
         Route::get('/', function () {
             return 'A';
-        })->name('user.index');
+        })->name('users.index');
     });
     Route::prefix('access-control')->group(function () {
         Route::get('/', function () {

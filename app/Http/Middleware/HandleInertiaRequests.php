@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -34,6 +35,11 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'flash' => [
+                'success' => Inertia::lazy(fn() => $request->session()->get('success')),
+                'error' => Inertia::lazy(fn() => $request->session()->get('error')),
+                'message' => Inertia::lazy(fn() => $request->session()->get('message')),
             ],
             'menus' => app(App\Services\AccessControlService::class)->getMenus(),
         ];

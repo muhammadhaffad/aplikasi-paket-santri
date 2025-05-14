@@ -5,6 +5,6 @@ use App;
 
 class AccessControlService {
     public function getMenus() {
-        return App\Models\Menu::all();
+        return App\Models\Menu::query()->orderBy('order_number')->get();
     }
 }

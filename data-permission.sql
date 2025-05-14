@@ -1,0 +1,15 @@
+insert into permissions (nama, created_at, updated_at) values 
+('all_permissions', now(), now()),
+('read_paket_kategori', now(), now()),
+('create_paket_kategori', now(), now()),
+('update_paket_kategori', now(), now()),
+('delete_paket_kategori', now(), now()),
+('read_paket', now(), now()),
+('create_paket', now(), now()),
+('update_paket', now(), now()),
+('delete_paket', now(), now()),
+('read_santri', now(), now()),
+('create_santri', now(), now()),
+('update_santri', now(), now()),
+('delete_santri', now(), now()),
+('read_laporan', now(), now());

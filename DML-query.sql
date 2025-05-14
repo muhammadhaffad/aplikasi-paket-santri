@@ -1,15 +1,15 @@
 alter table menus 
-    add column order int;
-    add column parent_id int references menus(id) on update cascade on delete restrict;
+    add column order_number int,
+    add column parent_id int references menus(id) on update cascade on delete restrict,
     drop column deleted_at;
 
 create or replace function ftb_add_menu()
 returns trigger as $$
 begin
     if new.parent_id is null then
-        new.order = (select max(order) from menus) + 1;
+        new.order_number = (select coalesce(max(order_number), 0) from menus) + 1;
     else
-        new.order = (select max(order) from menus where parent_id = new.parent_id) + 1;
+        new.order_number = (select coalesce(max(order_number), 0) from menus where parent_id = new.parent_id) + 1;
     end if;
     return new;
 end;
@@ -32,7 +32,7 @@ begin
     end if;
 
     -- Dapatkan parent_id dan posisi menu yang akan dihapus
-    select parent_id, order 
+    select parent_id, order_number 
     into v_parent_id, v_current_position
     from menus 
     where id = p_menu_id;
@@ -48,9 +48,9 @@ begin
 
         -- Re-arrange urutan menu yang tersisa
         update menus
-        set order = order - 1
+        set order_number = order_number - 1
         where parent_id is not distinct from v_parent_id
-        and order > v_current_position;
+        and order_number > v_current_position;
 
     exception when others then
         raise exception 'Gagal menghapus menu: %', sqlerrm;
@@ -59,7 +59,7 @@ end;
 $$
     language plpgsql;
 
-create or replace function update_menu_order(
+create or replace function update_menu_order_number(
     p_menu_id int,
     p_new_position int,
     p_new_parent_id int default null
@@ -76,7 +76,7 @@ begin
     end if;
 
     -- Dapatkan parent_id lama
-    select parent_id, order 
+    select parent_id, order_number 
     into v_old_parent_id, v_current_position
     from menus 
     where id = p_menu_id;
@@ -103,7 +103,7 @@ begin
     end if;
 
     -- Dapatkan posisi maksimum di parent yang dituju
-    select coalesce(max(order), 0)
+    select coalesce(max(order_number), 0)
     into v_max_position
     from menus
     where parent_id is not distinct from coalesce(p_new_parent_id, v_old_parent_id);
@@ -126,31 +126,31 @@ begin
             if p_new_position < v_current_position then
                 -- Geser naik: semua menu antara posisi baru dan posisi lama digeser ke bawah
                 update menus
-                set order = order + 1
+                set order_number = order_number + 1
                 where parent_id is not distinct from v_old_parent_id
-                and order >= p_new_position
-                and order < v_current_position;
+                and order_number >= p_new_position
+                and order_number < v_current_position;
             elsif p_new_position > v_current_position then
                 -- Geser turun: semua menu antara posisi lama dan posisi baru digeser ke atas
                 update menus
-                set order = order - 1
+                set order_number = order_number - 1
                 where parent_id is not distinct from v_old_parent_id
-                and order > v_current_position
-                and order <= p_new_position;
+                and order_number > v_current_position
+                and order_number <= p_new_position;
             end if;
         else
             -- Jika pindah ke parent berbeda
             -- Geser menu di parent lama
             update menus
-            set order = order - 1
+            set order_number = order_number - 1
             where parent_id is not distinct from v_old_parent_id
-            and order > v_current_position;
+            and order_number > v_current_position;
 
             -- Geser menu di parent baru
             update menus
-            set order = order + 1
+            set order_number = order_number + 1
             where parent_id is not distinct from p_new_parent_id
-            and order >= p_new_position;
+            and order_number >= p_new_position;
 
             -- Update parent_id
             update menus
@@ -160,7 +160,7 @@ begin
 
         -- Update posisi menu yang dipindahkan
         update menus
-        set order = p_new_position
+        set order_number = p_new_position
         where id = p_menu_id;
 
     exception when others then
@@ -173,8 +173,8 @@ language plpgsql;
 insert into menus (nama, route_name, route_active, parent_id) values 
 ('Dashboard', 'dashboard', 'dashboard', null),
 ('Santri', 'santris.index', 'santris.*', null),
-('Paket', 'paket.index', 'paket.*', null),
-('Laporan', 'laporans.index', 'laporans.*', null),
+('Paket', 'pakets.index', 'pakets.*', null),
+('Laporan', 'laporan.index', 'laporan.*', null),
 ('Master Data', 'master-data.index', 'master-data.*', null),
 ('User', 'users.index', 'users.*', null),
 ('Access Control', 'access-control.index', 'access-control.*', null);

@@ -20,6 +20,12 @@
         "vite": "^5.0.0"
     },
     "dependencies": {
-        "react-detectable-overflow": "^0.8.0"
+        "@tanstack/react-table": "^8.21.3",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.510.0",
+        "react-detectable-overflow": "^0.8.0",
+        "react-hot-toast": "^2.5.2",
+        "tailwind-merge": "^3.3.0",
+        "use-debounce": "^10.0.4"
     }
 }
