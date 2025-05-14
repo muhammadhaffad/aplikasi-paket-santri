@@ -1,43 +1,49 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
+import { useOverflowDetector } from 'react-detectable-overflow';
 
-const menus = [
-    { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
-    { label: 'Santri', href: null, active: null },
-    { label: 'Paket', href: null, active: null },
-    { label: 'Laporan', href: null, active: null },
-    { label: 'Users', href: null, active: null },
-]
+const getMenus = () => {
+    return [
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+        { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard') },
+    ]
+}
 
 export default function Authenticated({ user, header, children }) {
+    const { props } = usePage();
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const menus = props.menus;
+    const { ref, overflow } = useOverflowDetector({});
 
     return (
         <div className="min-h-screen bg-gray-100">
             <nav className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
-                        <div className="flex">
+                        <div className="flex overflow-hidden">
                             <div className="shrink-0 flex items-center">
                                 <Link href="/">
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {menus.map((menu) => (
-                                    <NavLink key={menu.label} href={menu.href} active={menu.active}>
-                                        {menu.label}
+                            <div ref={ref} className={(overflow ? 'invisible' : 'flex') + " overflow-hidden space-x-8 -my-px ms-10 flex"}>
+                                {menus.map((menu,index) => (
+                                    <NavLink key={menu.nama + index} href={route(menu.route_name)} active={route().current(menu.route_active)}>
+                                        {menu.nama}
                                     </NavLink>
                                 ))}
                             </div>
                         </div>
 
-                        <div className="hidden sm:flex sm:items-center sm:ms-6">
+                        <div className={"items-center ms-6 " + (overflow ? 'invisible' : 'flex')}>
                             <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
@@ -74,7 +80,7 @@ export default function Authenticated({ user, header, children }) {
                             </div>
                         </div>
 
-                        <div className="-me-2 flex items-center sm:hidden">
+                        <div className={"-me-2 flex items-center " + (overflow ? '' : 'hidden')}>
                             <button
                                 onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
                                 className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
@@ -100,11 +106,12 @@ export default function Authenticated({ user, header, children }) {
                     </div>
                 </div>
 
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
+                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + (overflow ? '' : ' hidden')}>
                     <div className="pt-2 pb-3 space-y-1">
-                        {menus.map((menu) => (
-                            <ResponsiveNavLink key={menu.label} href={menu.href} active={menu.active}>
-                                {menu.label}
+                        {menus.map((menu, index) => (
+                            console.log(menu),
+                            <ResponsiveNavLink key={menu.nama + index} href={route(menu.route_name)} active={route().current(menu.route_active)}>
+                                {menu.nama}
                             </ResponsiveNavLink>
                         ))}
                     </div>
