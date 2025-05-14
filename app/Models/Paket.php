@@ -5,17 +5,23 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Santri extends Model
+class Paket extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'nis';
-
-    protected $keyType = 'string';
-
     protected $guarded = [
-        '',
+        'id',
     ];
+
+    public function santri()
+    {
+        return $this->belongsTo(Santri::class);
+    }
+
+    public function paketKategori()
+    {
+        return $this->belongsTo(PaketKategori::class, 'kategori_id', 'id');
+    }
 
     public function asrama()
     {

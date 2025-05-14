@@ -177,7 +177,6 @@ export function mockAPI({
     sort: { field = "id", order = "ASC" } = {},
     search = "",
 } = {}) {
-    console.info(limit, skip, field, order, search);
     const episodes = [
         ...EPISODES.filter((episode) => {
             return episode.title.toLowerCase().includes(search.toLowerCase());

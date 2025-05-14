@@ -49,7 +49,7 @@ export const Pagination = ({ tableLib, sizes }) => {
                 <span>Show: </span>
                 <select
                     className="w-full md:w-auto text-sm py-2"
-                    value={tableLib.getState().pageSize}
+                    value={tableLib.getState().pagination.pageSize}
                     onChange={(e) => tableLib.setPageSize(parseInt(e.target.value, 10))}
                 >
                     {sizes.map((size) => (
@@ -119,11 +119,11 @@ const DataTable = ({
 }) => {
     const columns = useMemo(
         () =>
-            cols.map(({ id, header, enableSorting }) => ({
-                ...columnHelper.accessor(id, {
-                    header,
-                }),
-                enableSorting,
+            cols.map((col) => ({
+                ...col,
+                ...columnHelper.accessor(col.id, {
+                    header: col.header,
+                })
             })),
         [cols],
     );

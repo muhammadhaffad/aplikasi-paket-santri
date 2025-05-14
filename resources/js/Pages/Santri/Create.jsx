@@ -1,12 +1,14 @@
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/SecondaryButton';
 import TextArea from '@/Components/TextArea';
 import TextInput from '@/Components/TextInput';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import * as Lucide from 'lucide-react';
 
 export default function Create({ auth, asramas }) {
     const { data, setData, post, errors, processing, reset, recentlySuccessful } = useForm({
@@ -24,8 +26,7 @@ export default function Create({ auth, asramas }) {
                     toast.error(e.error);
                 }
             },
-            onSuccess: ({props}) => {
-                console.info(props);
+            onSuccess: ({ props }) => {
                 if (props.flash.success) {
                     toast.success(props.flash.success);
                 }
@@ -35,9 +36,16 @@ export default function Create({ auth, asramas }) {
     };
     return <AuthenticatedLayout
         user={auth.user}
-        header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Santri</h2>}
+        header={
+            <div className="flex items-center gap-4">
+                <SecondaryButton onClick={() => history.back()} title="Kembali">
+                    <Lucide.ArrowLeft className='size-4' />
+                </SecondaryButton>
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">Tambah Santri</h2>
+            </div>
+        }
     >
-        <Head title="Santri" />
+        <Head title="Tambah Santri" />
 
         <div className="py-12">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">

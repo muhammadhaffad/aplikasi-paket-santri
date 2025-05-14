@@ -15,13 +15,17 @@ class SantriController extends Controller
         protected SantriService $santriService)
     {}
 
+    public function getSantri(Request $request)
+    {
+        $data = $this->santriService->getSantri($request->search, $request->limit, $request->skip, $request->sortOrder, $request->sortField);
+        return response()->json($data);
+    }
+
     public function index(Request $request)
     {
-        $santri = $this->santriService->getSantri($request->search, $request->limit, $request->skip, $request->sortOrder, $request->sortField);
-        return Inertia::render('Santri/Index', [
-            'santri' => $santri,
-        ]);
+        return Inertia::render('Santri/Index');
     }
+
 
     public function create()
     {
@@ -45,19 +49,41 @@ class SantriController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($nis)
     {
+        $data = $this->santriService->show($nis);
+        return Inertia::render('Santri/Show', [
+            'data' => $data,
+            'asramas' => $this->dataMasterService->getAsramas(),
+        ]);
     }
 
-    public function edit($id)
+    public function edit($nis)
     {
+        $data = $this->santriService->show($nis);
+        return Inertia::render('Santri/Edit', [
+            'data' => $data,
+            'asramas' => $this->dataMasterService->getAsramas(),
+        ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $nis)
     {
+        try {
+            $this->santriService->update($request->all(), $nis);
+            return back()->with('success', 'Santri berhasil diubah');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors());
+        } catch (\Exception $e) {
+            return back()->withErrors([
+                'error' => 'Gagal mengubah santri: ' . $e->getMessage(),
+            ]);
+        }
     }
 
-    public function destroy($id)
+    public function destroy($nis)
     {
+        $santri = $this->santriService->destroy($nis);
+        return back()->with('success', 'Santri ' . $santri->nama . ' berhasil dihapus');
     }
 }

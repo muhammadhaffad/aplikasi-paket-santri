@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ExportController;
+use App\Http\Controllers\PaketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
 use Illuminate\Foundation\Application;
@@ -36,20 +38,28 @@ Route::middleware('auth')->group(function () {
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
+    Route::prefix('api')->group(function () {
+        Route::prefix('santri')->group(function () {
+            Route::get('/', [SantriController::class, 'getSantri'])->name('santris.api.index');
+        });
+        Route::prefix('paket')->group(function () {
+            Route::get('/', [PaketController::class, 'getPakets'])->name('pakets.api.index');
+        });
+    });
     Route::prefix('santri')->group(function () {
         Route::get('/', [SantriController::class, 'index'])->name('santris.index');
         Route::get('/create', [SantriController::class, 'create'])->name('santris.create');
         Route::post('/store', [SantriController::class, 'store'])->name('santris.store');
-        Route::get('/edit/{id}', function () {
-            return Inertia::render('Santri/Edit');
-        })->name('santris.edit');
-        Route::get('/show/{id}', function () {
-            return Inertia::render('Santri/Show');
-        })->name('santris.show');
+        Route::delete('/destroy/{nis}', [SantriController::class, 'destroy'])->name('santris.destroy');
+        Route::get('/edit/{nis}', [SantriController::class, 'edit'])->name('santris.edit');
+        Route::put('/update/{nis}', [SantriController::class, 'update'])->name('santris.update');
+        Route::get('/show/{nis}', [SantriController::class, 'show'])->name('santris.show');
+        Route::get('/export/excel', [ExportController::class, 'SantriToExcel'])->name('santris.export.excel');
+        Route::get('/export/pdf', [ExportController::class, 'SantriToPdf'])->name('santris.export.pdf');
     });
     Route::prefix('paket')->group(function () {
         Route::get('/', function () {
-            return 'A';
+            return Inertia::render('Paket/Index');
         })->name('pakets.index');
     });
     Route::prefix('laporan')->group(function () {
