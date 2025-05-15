@@ -57,13 +57,13 @@ class SantriService {
     }
 
     public function destroy($nis) {
-        $santri = App\Models\Santri::find($nis);
+        $santri = App\Models\Santri::findOrFail($nis);
         $santri->delete();
         return $santri;
     }
 
     public function show($nis) {
-        return App\Models\Santri::find($nis)->load('asrama');
+        return App\Models\Santri::findOrFail($nis)->load('asrama');
     }
 
     public function update($data, $nis) {
@@ -78,6 +78,6 @@ class SantriService {
         }
         
         $data = $data->validated();
-        return App\Models\Santri::find($nis)->update($data);
+        return App\Models\Santri::findOrFail($nis)->update($data);
     }
 }

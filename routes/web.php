@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ExportController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
@@ -45,6 +46,9 @@ Route::middleware('auth')->group(function () {
         Route::prefix('paket')->group(function () {
             Route::get('/', [PaketController::class, 'getPakets'])->name('pakets.api.index');
         });
+        Route::prefix('laporan')->group(function () {
+            Route::get('/', [LaporanController::class, 'getLaporan'])->name('laporan.api.index');
+        });
     });
     Route::prefix('santri')->group(function () {
         Route::get('/', [SantriController::class, 'index'])->name('santris.index');
@@ -61,11 +65,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/', function () {
             return Inertia::render('Paket/Index');
         })->name('pakets.index');
+        Route::get('/create/{jenis_paket}', [PaketController::class, 'create'])->name('pakets.create')->where('jenis_paket', 'masuk|keluar');
+        Route::post('/store/{jenis_paket}', [PaketController::class, 'store'])->name('pakets.store')->where('jenis_paket', 'masuk|keluar');
+        Route::get('/edit/{id}/{jenis_paket}', [PaketController::class, 'edit'])->name('pakets.edit')->where('jenis_paket', 'masuk|keluar');
+        Route::put('/update/{id}/{jenis_paket}', [PaketController::class, 'update'])->name('pakets.update')->where('jenis_paket', 'masuk|keluar');
+        Route::get('/show/{id}/{jenis_paket}', [PaketController::class, 'show'])->name('pakets.show')->where('jenis_paket', 'masuk|keluar');
+        Route::delete('/destroy/{id}', [PaketController::class, 'destroy'])->name('pakets.destroy');
+        Route::get('/export/excel/{jenisPaket}', [ExportController::class, 'PaketToExcel'])->name('pakets.export.excel')->where('jenisPaket', 'masuk|keluar');
+        Route::get('/export/pdf/{jenisPaket}', [ExportController::class, 'PaketToPdf'])->name('pakets.export.pdf')->where('jenisPaket', 'masuk|keluar');
     });
     Route::prefix('laporan')->group(function () {
-        Route::get('/', function () {
-            return 'A';
-        })->name('laporan.index');
+        Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
     });
     Route::prefix('master-data')->group(function () {
         Route::get('/', function () {

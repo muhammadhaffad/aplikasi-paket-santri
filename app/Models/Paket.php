@@ -13,6 +13,10 @@ class Paket extends Model
         'id',
     ];
 
+    protected $casts = [
+        'tanggal_diterima' => 'datetime',
+    ];
+
     public function santri()
     {
         return $this->belongsTo(Santri::class);

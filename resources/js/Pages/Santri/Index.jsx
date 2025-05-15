@@ -88,7 +88,7 @@ export default function Index({ auth }) {
                             <SecondaryButton onClick={() => location.href = route('santris.export.excel')} className="p-2" title="Export to Excel">
                                 <Lucide.Sheet className='size-4' />
                             </SecondaryButton>
-                            <SecondaryButton className="p-2" title="Save as PDF">
+                            <SecondaryButton onClick={() => location.href = route('santris.export.pdf')} className="p-2" title="Save as PDF">
                                 <Lucide.File className='size-4' />
                             </SecondaryButton>
                         </div>

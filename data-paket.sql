@@ -1,7 +1,7 @@
 INSERT INTO pakets (
   kategori_id, santri_nis, asrama_id, nama, pengirim, penerima,
   tanggal_diterima, keterangan_disita, status, created_at, updated_at, jenis_paket
-) VALUES
+) VALUES 
 (1, 'S20250001', 1, 'Paket Makanan Basah 1', 'Ibunya Ahmad', NULL, '2025-05-10 10:15:00', '', 'belum diambil', NOW(), NOW(), 'masuk'),
 (2, 'S20250002', 2, 'Paket Makanan Kering 1', 'Ayahnya Budi', NULL, '2025-05-09 14:00:00', '', 'diambil', NOW(), NOW(), 'masuk'),
 (3, 'S20250003', 3, 'Paket Non Makanan 1', 'Tantenya Cici', NULL, '2025-05-08 09:30:00', 'Disita karena ada barang tajam', 'belum diambil', NOW(), NOW(), 'masuk'),

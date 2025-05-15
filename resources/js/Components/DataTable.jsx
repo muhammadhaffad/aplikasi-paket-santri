@@ -4,7 +4,7 @@ import {
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./Table";
 import SecondaryButton from "./SecondaryButton";
 
@@ -40,7 +40,7 @@ export function useSorting(initialField = "id", initialOrder = "ASC") {
     };
 }
 
-export const Loader = () => <div className="loader">⏳</div>;
+export const Loader = () => <div>⏳</div>;
 
 export const Pagination = ({ tableLib, sizes }) => {
     return (
@@ -88,9 +88,9 @@ export const Pagination = ({ tableLib, sizes }) => {
                         </option>
                     ))}
                 </select>
-                <SecondaryButton 
+                <SecondaryButton
                     className="hidden md:block "
-                    disabled={!tableLib.getCanNextPage()} 
+                    disabled={!tableLib.getCanNextPage()}
                     onClick={tableLib.nextPage}
                 >
                     Next
@@ -117,6 +117,9 @@ const DataTable = ({
     pagination,
     sorting,
 }) => {
+    const tableContainerRef = useRef(null);
+    const horizontalScrollPositionRef = useRef(0);
+
     const columns = useMemo(
         () =>
             cols.map((col) => ({
@@ -139,15 +142,41 @@ const DataTable = ({
         state: { pagination, sorting },
         rowCount,
     });
+
+    // Save horizontal scroll position before re-render
+    useEffect(() => {
+        if (tableContainerRef.current) {
+            const saveHorizontalScrollPosition = () => {
+                if (loading) return;
+                horizontalScrollPositionRef.current = tableContainerRef.current.scrollLeft;
+            };
+
+            const tableContainer = tableContainerRef.current;
+            tableContainer.addEventListener('scroll', saveHorizontalScrollPosition);
+
+            return () => {
+                tableContainer.removeEventListener('scroll', saveHorizontalScrollPosition);
+            };
+        }
+    }, []);
+
+    // Restore horizontal scroll position after data updates
+    useEffect(() => {
+        if (tableContainerRef.current) {
+            tableContainerRef.current.scrollLeft = horizontalScrollPositionRef.current;
+        }
+    }, [data]);
+
     return (
         <section className="space-y-4">
-            <Table>
+            {loading ? <span className="flex items-center gap-2"><div className="animate-spin w-min">⏳</div> Loading...</span> : ''}
+            <Table ref={tableContainerRef}>
                 <TableHeader>
                     {tableLib.getHeaderGroups().map((headerGroup) => (
                         <TableRow className="hover:bg-muted bg-muted" key={headerGroup.id}>
                             {headerGroup.headers.map((header) => (
                                 <TableHead
-                                    className={header.column.getCanSort() ? "cursor-pointer" : ""}
+                                    className={"whitespace-nowrap " + (header.column.getCanSort() ? "cursor-pointer" : "")}
                                     key={header.id}
                                     {...(header.column.getCanSort()
                                         ? { onClick: header.column.getToggleSortingHandler() }
@@ -169,23 +198,15 @@ const DataTable = ({
                     ))}
                 </TableHeader>
                 <TableBody>
-                    {loading ? (
-                        <TableRow>
-                            <TableCell colSpan="100%">
-                                <Loader />
-                            </TableCell>
+                    {tableLib.getRowModel().rows.map((row) => (
+                        <TableRow key={row.id}>
+                            {row.getVisibleCells().map((cell) => (
+                                <TableCell key={cell.id}>
+                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                </TableCell>
+                            ))}
                         </TableRow>
-                    ) : (
-                        tableLib.getRowModel().rows.map((row) => (
-                            <TableRow key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <TableCell key={cell.id}>
-                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                    </TableCell>
-                                ))}
-                            </TableRow>
-                        ))
-                    )}
+                    ))}
                 </TableBody>
             </Table>
             <Pagination tableLib={tableLib} sizes={[5, 10, 20]} />
