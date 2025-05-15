@@ -1,10 +1,13 @@
 <?php
 
+use App\Http\Controllers\AccessControlController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SantriController;
+use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,17 +24,10 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::prefix('profile')->group(function () {
@@ -48,6 +44,16 @@ Route::middleware('auth')->group(function () {
         });
         Route::prefix('laporan')->group(function () {
             Route::get('/', [LaporanController::class, 'getLaporan'])->name('laporan.api.index');
+            Route::get('/stats/{periode}/{time}/{idKategori?}', [LaporanController::class, 'getStats'])->name('laporan.api.stats');
+        });
+        Route::prefix('users')->group(function () {
+            Route::get('/', [UserController::class, 'getUsers'])->name('users.api.index');
+        });
+        Route::prefix('permissions')->group(function () {
+            Route::get('/', [AccessControlController::class, 'getPermissions'])->name('permissions.api.index');
+        });
+        Route::prefix('roles')->group(function () {
+            Route::get('/', [AccessControlController::class, 'getRoles'])->name('roles.api.index');
         });
     });
     Route::prefix('santri')->group(function () {
@@ -76,6 +82,7 @@ Route::middleware('auth')->group(function () {
     });
     Route::prefix('laporan')->group(function () {
         Route::get('/', [LaporanController::class, 'index'])->name('laporan.index');
+        Route::get('/export/excel', [ExportController::class, 'LaporanToExcel'])->name('laporan.export.excel');
     });
     Route::prefix('master-data')->group(function () {
         Route::get('/', function () {
@@ -83,14 +90,31 @@ Route::middleware('auth')->group(function () {
         })->name('master-data.index');
     });
     Route::prefix('users')->group(function () {
-        Route::get('/', function () {
-            return 'A';
-        })->name('users.index');
+        Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::get('/create', [UserController::class, 'create'])->name('users.create');
+        Route::post('/store', [UserController::class, 'store'])->name('users.store');
+        Route::get('/edit/{id}', [UserController::class, 'edit'])->name('users.edit');
+        Route::put('/update/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/destroy/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+        Route::get('/export/excel', [ExportController::class, 'UserToExcel'])->name('users.export.excel');
     });
     Route::prefix('access-control')->group(function () {
         Route::get('/', function () {
-            return 'A';
+            return redirect()->route('access-control.permission');
         })->name('access-control.index');
+        Route::get('/permission', function () {
+            return Inertia::render('Permission/Index');
+        })->name('access-control.permission');
+        Route::get('/role', function () {
+            return Inertia::render('Role/Index');
+        })->name('access-control.role');
+        Route::get('/role/create', function () {
+            return Inertia::render('Role/Create');
+        })->name('access-control.role.create');
+        Route::get('/role/edit/{id}', [AccessControlController::class, 'editRole'])->name('access-control.role.edit');
+        Route::put('/role/update/{id}', [AccessControlController::class, 'updateRole'])->name('access-control.role.update');
+        Route::delete('/role/destroy/{id}', [AccessControlController::class, 'deleteRole'])->name('access-control.role.destroy');
+        Route::post('/role/store', [AccessControlController::class, 'storeRole'])->name('access-control.role.store');
     });
 });
 

@@ -102,10 +102,10 @@ const cols = (setShowModal, setRowSelected) => [
         cell: ({row}) => {
             return (
                 <div className="flex gap-2">
-                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('pakets.show', {id: row.original.id, jenisPaket: row.original.jenisPaket}))} title="Lihat">
+                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('pakets.show', {id: row.original.id, jenis_paket: row.original.jenis_paket}))} title="Lihat">
                         <Lucide.Eye className='size-4' />
                     </SecondaryButton>
-                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('pakets.edit', {id: row.original.id, jenisPaket: row.original.jenisPaket}))} title="Ubah">
+                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('pakets.edit', {id: row.original.id, jenis_paket: row.original.jenis_paket}))} title="Ubah">
                         <Lucide.Pen className='size-4' />
                     </SecondaryButton>
                     <DangerButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => {setShowModal(true); setRowSelected(row.original)}} title="Hapus">

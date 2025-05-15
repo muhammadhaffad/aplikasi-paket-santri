@@ -125,62 +125,80 @@ export default function Index({ auth, paketKategoris }) {
                 <div className=" overflow-hidden shadow-sm sm:rounded-lg bg-background">
                     <div className="p-6 text-gray-900 space-y-4">
                         <div className="flex gap-2 justify-end">
-                            <SecondaryButton onClick={() => location.href = route('pakets.export.excel', { jenisPaket: filter.jenisPaket })} className="p-2" title="Export to Excel">
+                            <SecondaryButton onClick={() => location.href = route('laporan.export.excel', { _query: {...filter} })} className="p-2" title="Export to Excel">
                                 <Lucide.Sheet className='size-4' />
                             </SecondaryButton>
-                            <SecondaryButton onClick={() => location.href = route('pakets.export.pdf', { jenisPaket: filter.jenisPaket })} className="p-2" title="Export to PDF">
+                            {/* <SecondaryButton onClick={() => location.href = route('laporan.export.pdf', { _query: {...filter} })} className="p-2" title="Export to PDF">
                                 <Lucide.File className='size-4' />
-                            </SecondaryButton>
+                            </SecondaryButton> */}
                         </div>
-                        <div className="space-y-2">
-                            <InputLabel value="Rentang Tanggal" />
-                            <div className="block space-y-2 md:flex md:gap-2 md:space-y-0">
-                                <select
-                                    className="w-full md:w-auto"
-                                    value={filter.rentangTanggal.column}
-                                    onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, column: e.target.value } })}
-                                >
-                                    <option value="tanggal_diterima">Tanggal Diterima</option>
-                                    <option value="created_at">Tanggal Dibuat</option>
-                                </select>
-                                <div className="block space-y-2 sm:flex sm:gap-2 sm:space-y-0">
-                                    <TextInput
-                                        className="w-full"
-                                        type="datetime-local"
-                                        value={filter.rentangTanggal.start}
-                                        onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, start: e.target.value } })}
-                                    />
-                                    <TextInput
-                                        className="w-full"
-                                        type="datetime-local"
-                                        value={filter.rentangTanggal.end}
-                                        onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, end: e.target.value } })}
-                                    />
+                        <div className="!mb-8 space-y-4 block">
+                            <div className="space-y-1">
+                                <InputLabel value="Rentang Tanggal" />
+                                <div className="block space-y-2 md:flex md:gap-2 md:space-y-0">
+                                    <select
+                                        className="w-full md:w-auto"
+                                        value={filter.rentangTanggal.column}
+                                        onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, column: e.target.value } })}
+                                    >
+                                        <option value="tanggal_diterima">Tanggal Diterima</option>
+                                        <option value="created_at">Tanggal Dibuat</option>
+                                    </select>
+                                    <div className="block space-y-2 sm:flex sm:gap-2 sm:space-y-0">
+                                        <TextInput
+                                            className="w-full"
+                                            type="datetime-local"
+                                            value={filter.rentangTanggal.start}
+                                            onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, start: e.target.value } })}
+                                        />
+                                        <TextInput
+                                            className="w-full"
+                                            type="datetime-local"
+                                            value={filter.rentangTanggal.end}
+                                            onChange={(e) => setFilter({ ...filter, rentangTanggal: { ...filter.rentangTanggal, end: e.target.value } })}
+                                        />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            <InputLabel value="Jenis Paket" />
-                            <select
-                                value={filter.jenisPaket}
-                                onChange={(e) => setFilter({ ...filter, jenisPaket: e.target.value })}
-                            >
-                                <option value="">Semua</option>
-                                <option value="masuk">Masuk</option>
-                                <option value="keluar">Keluar</option>
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <InputLabel value="Kategori Paket" />
-                            <select
-                                value={filter.kategoriPakets[0]}
-                                onChange={(e) => setFilter({ ...filter, kategoriPakets: e.target.value ? [e.target.value] : [] })}
-                            >
-                                <option value="">Semua</option>
-                                {paketKategoris.map((kategori) => (
-                                    <option key={kategori.id} value={kategori.id}>{kategori.nama}</option>
-                                ))}
-                            </select>
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="space-y-1">
+                                    <InputLabel value="Jenis Paket" />
+                                    <select
+                                        className="w-full"
+                                        value={filter.jenisPaket}
+                                        onChange={(e) => setFilter({ ...filter, jenisPaket: e.target.value })}
+                                    >
+                                        <option value="">Semua</option>
+                                        <option value="masuk">Masuk</option>
+                                        <option value="keluar">Keluar</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-1">
+                                    <InputLabel value="Kategori Paket" />
+                                    <select
+                                        className="w-full"
+                                        value={filter.kategoriPakets[0]}
+                                        onChange={(e) => setFilter({ ...filter, kategoriPakets: e.target.value ? [e.target.value] : [] })}
+                                    >
+                                        <option value="">Semua</option>
+                                        {paketKategoris.map((kategori) => (
+                                            <option key={kategori.id} value={kategori.id}>{kategori.nama}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="space-y-1">
+                                    <InputLabel value="Disita?" />
+                                    <select
+                                        className="w-full"
+                                        value={filter.isDisita}
+                                        onChange={(e) => setFilter({ ...filter, isDisita: e.target.value })}
+                                    >
+                                        <option value="">Semua</option>
+                                        <option value="1">Ya</option>
+                                        <option value="0">Tidak</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div className="[&>section>div]:border [&>section>div]:rounded [&>section>div]:w-auto">
                             <DataTable

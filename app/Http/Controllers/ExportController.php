@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\LaporanExport;
 use App\Exports\PaketExport;
 use App\Exports\SantriExport;
+use App\Exports\UserExport;
 use App\Models\Paket;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -75,5 +77,29 @@ class ExportController extends Controller
         $pdf->setPaper('a4', 'landscape');
         
         return $pdf->download($filename);
+    }
+
+    public function LaporanToExcel(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'filename' => 'nullable|string|max:255',
+        ]);
+        
+        $filename = $request->input('filename', 'data-laporan-export-' . date('Y-m-d')) . '.xlsx';
+        $export = new LaporanExport($request->all());
+        return Excel::download($export, $filename);
+    }
+    
+    public function UserToExcel(Request $request)
+    {
+        // Validate request
+        $request->validate([
+            'filename' => 'nullable|string|max:255',
+        ]);
+        
+        $filename = $request->input('filename', 'data-user-export-' . date('Y-m-d')) . '.xlsx';
+        $export = new UserExport();
+        return Excel::download($export, $filename);
     }
 }

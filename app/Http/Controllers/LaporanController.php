@@ -32,6 +32,11 @@ class LaporanController extends Controller
         return response()->json($this->laporanService->generateLaporan($request->input('limit'), $request->input('skip'), $request->input('sortOrder'), $request->input('sortField')));
     }
 
+    public function getStats($periode, $time, $idKategori = null)
+    {
+        return response()->json($this->laporanService->generateStats($periode, $time, $idKategori));
+    }
+
     public function index()
     {
         $paketKategoris = $this->dataMasterService->getPaketKategoris();

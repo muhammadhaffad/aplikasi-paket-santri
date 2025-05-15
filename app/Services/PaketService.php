@@ -60,7 +60,7 @@ class PaketService
             'kategori_id' => 'required|exists:paket_kategoris,id',
             'pengirim' => 'required|max:100',
             'penerima' => 'required|max:100',
-            'tanggal_diterima' => 'nullable|date',
+            'tanggal_diterima' => 'required|date',
             'keterangan_disita' => 'nullable|max:200',
             'status' => 'required|in:belum diambil,diambil',
         ]);

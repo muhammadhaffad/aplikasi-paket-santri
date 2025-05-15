@@ -116,6 +116,7 @@ const DataTable = ({
     rowCount,
     pagination,
     sorting,
+    withPagination = true,
 }) => {
     const tableContainerRef = useRef(null);
     const horizontalScrollPositionRef = useRef(0);
@@ -209,7 +210,7 @@ const DataTable = ({
                     ))}
                 </TableBody>
             </Table>
-            <Pagination tableLib={tableLib} sizes={[5, 10, 20]} />
+            {withPagination && <Pagination tableLib={tableLib} sizes={[5, 10, 20]} />}
         </section>
     );
 };

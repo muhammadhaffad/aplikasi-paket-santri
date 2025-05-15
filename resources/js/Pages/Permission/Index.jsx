@@ -12,13 +12,12 @@ import { Head, router } from '@inertiajs/react';
 import axios from 'axios';
 import * as Lucide from 'lucide-react';
 import { useEffect, useState } from 'react';
-import useFetchSantri from './hooks/useFetchSantri';
-import DeleteSantriDialog from './partials/DeleteSantriDialog';
+import useFetchPermission from './hooks/useFetchPermission';
 
 const cols = (setShowModal, setRowSelected) => [
     {
-        id: "nis",
-        header: "NIS",
+        id: "id",
+        header: "ID",
         enableSorting: true,
     },
     {
@@ -26,47 +25,28 @@ const cols = (setShowModal, setRowSelected) => [
         header: "Nama",
         enableSorting: true,
     },
-    {
-        id: "asrama_id",
-        header: "Asrama",
-        enableSorting: true,
-        cell: ({row}) => {
-            return row.original.asrama.nama + " - " + row.original.asrama.gedung;
-        },
-    },
-    {
-        id: "alamat",
-        header: "Alamat",
-        enableSorting: false,
-    },
-    {
-        id: "total_paket",
-        header: "Total Paket",
-        enableSorting: false,
-        cell: ({row}) => {
-            return row.original.total_paket || 0;
-        },
-    },
-    {
-        id: "action",
-        header: "Aksi",
-        enableSorting: false,
-        cell: ({row}) => {
-            return (
-                <div className="flex gap-2">
-                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('santris.show', {id: row.original.nis}))} title="Lihat">
-                        <Lucide.Eye className='size-4' />
-                    </SecondaryButton>
-                    <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('santris.edit', {id: row.original.nis}))} title="Ubah">
-                        <Lucide.Pen className='size-4' />
-                    </SecondaryButton>
-                    <DangerButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => {setShowModal(true); setRowSelected(row.original)}} title="Hapus">
-                        <Lucide.Trash className='size-4' />
-                    </DangerButton>
-                </div>
-            );
-        },
-    }
+    // {
+    //     id: "role",
+    //     header: "Role",
+    //     enableSorting: true,
+    // },
+    // {
+    //     id: "action",
+    //     header: "Aksi",
+    //     enableSorting: false,
+    //     cell: ({row}) => {
+    //         return (
+    //             <div className="flex gap-2">
+    //                 <SecondaryButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => router.visit(route('users.edit', {id: row.original.id}))} title="Ubah">
+    //                     <Lucide.Pen className='size-4' />
+    //                 </SecondaryButton>
+    //                 <DangerButton className='h-9 w-9 inline-flex items-center justify-center' onClick={() => {setShowModal(true); setRowSelected(row.original)}} title="Hapus">
+    //                     <Lucide.Trash className='size-4' />
+    //                 </DangerButton>
+    //             </div>
+    //         );
+    //     },
+    // }
 ];
 
 export default function Index({ auth }) {
@@ -76,7 +56,7 @@ export default function Index({ auth }) {
     const [showModal, setShowModal] = useState(false);
     const [rowSelected, setRowSelected] = useState(null);
 
-    const [data, setData, count, setCount, loading, refresh] = useFetchSantri({
+    const [data, setData, count, setCount, loading, refresh] = useFetchPermission({
         pagination: { limit, skip },
         sort: { field, order },
         search,
@@ -84,27 +64,26 @@ export default function Index({ auth }) {
 
     return <AuthenticatedLayout
         user={auth.user}
-        header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Santri</h2>}
+        header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Permission</h2>}
     >
-        <Head title="Santri" />
+        <Head title="Permission" />
 
         <div className="py-12">
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div className=" overflow-hidden shadow-sm sm:rounded-lg bg-background">
                     <div className="p-6 text-gray-900 space-y-4">
-                        <div className="flex gap-2 justify-end">
-                            <SecondaryButton onClick={() => location.href = route('santris.export.excel')} className="p-2" title="Export to Excel">
-                                <Lucide.Sheet className='size-4' />
+                        <div className="flex gap-2 justify-center mx-auto bg-accent p-2 rounded-lg w-full sm:w-min">
+                            <SecondaryButton onClick={() => router.visit(route('access-control.permission'))} className={`w-full p-2 inline-flex items-center justify-center gap-2 px-4 sm:w-auto bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 text-white`} title="Permission">
+                                Permission
                             </SecondaryButton>
-                            <SecondaryButton onClick={() => location.href = route('santris.export.pdf')} className="p-2" title="Save as PDF">
-                                <Lucide.File className='size-4' />
+                            <SecondaryButton onClick={() => router.visit(route('access-control.role'))} className={`w-full p-2 inline-flex items-center justify-center gap-2 px-4 sm:w-auto bg-muted hover:bg-muted/80 focus:bg-muted/80 active:bg-muted/80 text-gray-800 border-none shadow-none`} title="Role"> Role
                             </SecondaryButton>
                         </div>
                         <div className="flex gap-2 justify-between">
                             <TextInput value={searchInput} onChange={(e) => setSearchInput(e.target.value)} placeholder="Search..." />
-                            <PrimaryButton onClick={() => router.visit(route('santris.create'))} title="Add Santri" className='inline-flex items-center gap-2'>
-                                <Lucide.Plus className='size-4' /> Tambah Santri
-                            </PrimaryButton>
+                            {/* <PrimaryButton onClick={() => router.visit(route('permissions.create'))} title="Add Permission" className='inline-flex items-center gap-2'>
+                                <Lucide.Plus className='size-4' /> Tambah Permission
+                            </PrimaryButton> */}
                         </div>
                         <div className="[&>section>div]:border [&>section>div]:rounded [&>section>div]:w-auto">
                             <DataTable
@@ -122,6 +101,6 @@ export default function Index({ auth }) {
                 </div>
             </div>
         </div>
-        <DeleteSantriDialog show={showModal} onClose={() => setShowModal(false)} rowSelected={rowSelected} refresh={refresh} />
+        {/* <DeleteUserDialog show={showModal} onClose={() => setShowModal(false)} rowSelected={rowSelected} refresh={refresh} /> */}
     </AuthenticatedLayout>
 }

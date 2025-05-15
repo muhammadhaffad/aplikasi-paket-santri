@@ -41,7 +41,7 @@ class HandleInertiaRequests extends Middleware
                 'error' => Inertia::lazy(fn() => $request->session()->get('error')),
                 'message' => Inertia::lazy(fn() => $request->session()->get('message')),
             ],
-            'menus' => app(App\Services\AccessControlService::class)->getMenus(),
+            'menus' => app(App\Services\AccessControlService::class)->getMenus('', 0, 0, 'ASC', 'order_number', true)['items'],
         ];
     }
 }
